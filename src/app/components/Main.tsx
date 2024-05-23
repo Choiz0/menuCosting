@@ -8,8 +8,8 @@ import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 import AiResult from "./AiResult";
 interface MainProps {
-  exRecipe: Recipe;
-  exResult?: Result;
+  exRecipe?: Recipe | undefined;
+  exResult?: Result | undefined;
   isUpdate?: boolean;
   userId?: string | null;
 }
@@ -33,11 +33,15 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
 
   useEffect(() => {
     if (isUpdate) {
-      setRecipe(exRecipe);
-      setResult(exResult);
+      if (exRecipe) {
+        setRecipe(exRecipe);
+      }
+      if (exResult) {
+        setResult(exResult);
+      }
       console.log(exRecipe);
     }
-  }, []);
+  }, [isUpdate, exRecipe, exResult]);
 
   const handleSave = async () => {
     if (!userId) {
@@ -253,7 +257,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.put(`/api/recipes/${exRecipe._id}`, recipe, {
+      const res = await axios.put(`/api/recipes/${exRecipe?._id}`, recipe, {
         headers: {
           "Content-Type": "application/json",
         },
