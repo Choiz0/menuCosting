@@ -46,7 +46,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
     try {
       // Step 1: Save the recipe
       const res = await axios.post(
-        "http://localhost:3000/api/recipes",
+        "/api/recipes",
         { ...recipe, userId },
         {
           headers: {
