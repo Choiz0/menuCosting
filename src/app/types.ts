@@ -14,6 +14,7 @@ export interface Ingredient {
   }
   
 export interface Recipe {
+  _id?: any;
    id? : moongoose.Schema.Types.ObjectId;
     name: string;
     ingredients: Ingredient[];

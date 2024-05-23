@@ -11,6 +11,7 @@ interface MainProps {
   exRecipe: Recipe;
   exResult?: Result;
   isUpdate?: boolean;
+  userId: string | null;
 }
 
 const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
@@ -29,6 +30,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
     photo: "",
     recipeNotes: "",
   });
+
   useEffect(() => {
     if (isUpdate) {
       setRecipe(exRecipe);
@@ -311,7 +313,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
             handleReset={handleReset}
             handleSubmit={calculateResults}
           />
-          <AiResult result={result} recipe={recipe} />
+          {result && <AiResult result={result} recipe={recipe} />}
         </div>
 
         <div className="flex-grow flex flex-col">

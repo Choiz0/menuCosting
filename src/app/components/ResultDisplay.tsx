@@ -6,9 +6,9 @@ import TableRow from "./DisplayTableRow";
 import { useEffect } from "react";
 
 interface ResultDisplayProps {
-  result: Result;
+  result: Result | null | undefined;
   recipe: Recipe;
-  handleSave?: () => void;
+  handleSave?: () => void | Promise<void>;
   isDetail?: boolean;
   isUpdate?: boolean;
 }
@@ -23,7 +23,10 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
   const router = useRouter();
 
   const handleSaveButton = async () => {
-    await handleSave();
+    if (result !== undefined && result !== null && handleSave) {
+      await handleSave();
+    }
+
     router.push("/mypage");
   };
 

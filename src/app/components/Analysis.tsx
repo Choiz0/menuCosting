@@ -48,6 +48,7 @@ interface Analysis {
     maintainOrImproveFoodCostPercentage: Strategies;
   };
   profitMarginComparison: ProfitMarginComparison;
+  additionalInfoAnswer?: string;
 }
 
 interface AnalysisProps {
@@ -341,7 +342,7 @@ const Analysis: React.FC<AnalysisProps> = ({ data, isOpen, setIsOpen }) => {
                 </div>
                 <div className="p-6 bg-white border-b border-gray-200">
                   <h3 className="text-lg font-bold mb-2">
-                    Additional your question's answer
+                    Additional your questions
                   </h3>
                   <ul>
                     <svg

@@ -34,7 +34,7 @@ const handler = NextAuth({
       return true;
     },
     async session({ session, token }) {
-      session.user.id = token.id; // JWT 토큰에서 사용자 ID를 가져와 세션에 포함
+      session.user.id = token.id as string;// JWT 토큰에서 사용자 ID를 가져와 세션에 포함
       return session;
     },
     async jwt({ token, user }) {
