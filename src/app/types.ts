@@ -2,17 +2,15 @@
 import { ChangeEvent } from 'react';
 import moongoose from 'mongoose';
 export interface Ingredient {
-    name: string;
-    quantityPurchased: number;
-    measurement: string;
-    totalCost: number;
-    unitPrice: number;
-    quantityUsed: number;
-    quantityUsedMeasurement: string;
-    photo: string; // 사진 URL
-    ingredientNotes: string; // 메모
-  }
-  
+  name: string;
+  quantityPurchased: number; // 구입한 양
+  purchaseCost: number; // 구입 가격
+  unitPrice: number; // 단위 가격
+  quantityUsed: number; // 사용한 양
+  usedCost: number; // 사용한 가격
+  ingredientNotes: string; // 메모
+}
+ 
 export interface Recipe {
   _id?: any;
    id? : moongoose.Schema.Types.ObjectId;

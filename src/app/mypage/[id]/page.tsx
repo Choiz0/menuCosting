@@ -47,9 +47,6 @@ const RecipePage: React.FC = () => {
     setLoading(false);
   }, [params]);
 
-  const id = params?.id as string;
-  router.push(`/edit/${id}`);
-
   const handleDelete = async () => {
     const id = params?.id as string | undefined | null;
     if (!id) {
@@ -63,15 +60,17 @@ const RecipePage: React.FC = () => {
       console.error("Error deleting recipe:", error);
     }
   };
+
   const handleEdit = () => {
     const id = params?.id as string | undefined | null;
     if (!id) {
       console.error("ID is undefined");
       return;
     }
- 
+
     router.push(`/edit/${id}`);
   };
+
   if (loading) {
     return (
       <div>
@@ -175,16 +174,15 @@ const RecipePage: React.FC = () => {
           </div>
           <div className="">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-              <thead className="ltr:text-left rtl:text-right">
+              <thead className="ltr:text-left rtl:text-right hidden md:table-header-group">
                 <tr>
                   {[
                     "Ingredient Name",
                     "Quantity Purchased",
-                    "Measurement",
-                    "Total Cost",
+                    "Purchase Cost",
                     "Unit Price",
                     "Quantity Used",
-                    "Used Measurement",
+                    "Used Cost",
                     "Ingredient Notes",
                     "Action",
                   ].map((label, i) => {
@@ -203,30 +201,50 @@ const RecipePage: React.FC = () => {
               <tbody className="divide-y divide-gray-200">
                 {recipe.ingredients.map((ingredient, index) => {
                   return (
-                    <tr key={index}>
-                      <td className="px-4 py-2">{ingredient.name}</td>
-                      <td className="px-4 py-2">
+                    <tr key={index} className="flex flex-col md:table-row">
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Ingredient Name
+                        </span>
+                        {ingredient.name}
+                      </td>
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Quantity Purchased
+                        </span>
                         {ingredient.quantityPurchased}
                       </td>
-                      <td className="px-4 py-2">{ingredient.measurement}</td>
-                      <td className="px-4 py-2">
-                        $ {Number(ingredient.totalCost).toFixed(2)}
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Purchase Cost
+                        </span>
+                        $ {Number(ingredient.purchaseCost).toFixed(2)}
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Unit Price
+                        </span>
                         $ {Number(ingredient.unitPrice).toFixed(2)}
                       </td>
-                      <td className="px-4 py-2">{ingredient.quantityUsed}</td>
-                      <td className="px-4 py-2">
-                        {ingredient.quantityUsedMeasurement}
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Quantity Used
+                        </span>
+                        {ingredient.quantityUsed}
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Used Cost
+                        </span>
+                        $ {Number(ingredient.usedCost).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block">
+                        <span className="block md:hidden font-bold">
+                          Ingredient Notes
+                        </span>
                         {ingredient.ingredientNotes}
                       </td>
-                      <td className="px-4 py-2">
-                        <button className="bg-blue-500 text-white rounded px-2 py-1">
-                          Edit
-                        </button>
-                      </td>
+                      <td className="px-4 py-2 md:table-cell flex justify-between md:block"></td>
                     </tr>
                   );
                 })}

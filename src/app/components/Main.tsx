@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 import AiResult from "./AiResult";
+
 interface MainProps {
   exRecipe?: Recipe | undefined;
   exResult?: Result | undefined;
@@ -93,9 +94,27 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
     }
   };
 
+  const calculateUnitPrice = (
+    quantityPurchased: number,
+    purchaseCost: number
+  ) => {
+    if (quantityPurchased > 0 && purchaseCost > 0) {
+      return purchaseCost / quantityPurchased;
+    }
+    return 0;
+  };
+
+  const calculateUsedCost = (unitPrice: number, quantityUsed: number) => {
+    return unitPrice * quantityUsed;
+  };
+
   const calculateResults = () => {
     const ingredientsCost = recipe.ingredients.reduce((total, ingredient) => {
-      return total + ingredient.quantityUsed * ingredient.unitPrice;
+      const usedCost = calculateUsedCost(
+        ingredient.unitPrice,
+        ingredient.quantityUsed
+      );
+      return total + usedCost;
     }, 0);
 
     const labourCost = (recipe.labourCostPerHour / 60) * recipe.timeTaken;
@@ -109,14 +128,9 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
       recipe.numServings;
 
     const grossProfit = kitchenRevenue - ingredientsCost;
-    const foodCostPercentage =
-      (ingredientsCost / kitchenRevenue) * 100 === null
-        ? 0
-        : (ingredientsCost / kitchenRevenue) * 100;
+    const foodCostPercentage = (ingredientsCost / kitchenRevenue) * 100 || 0;
     const foodCostPercentageWithLabour =
-      (totalCost / kitchenRevenue) * 100 === null
-        ? 0
-        : (totalCost / kitchenRevenue) * 100;
+      (totalCost / kitchenRevenue) * 100 || 0;
     const costPerDish = totalCost / recipe.numServings;
     const contributionMarginWithLabour = kitchenRevenue - totalCost;
 
@@ -150,30 +164,20 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
       if (i === index) {
         const updatedIngredient = { ...ingredient, [name]: value };
 
-        if (
-          name === "quantityPurchased" ||
-          name === "totalCost" ||
-          name === "measurement"
-        ) {
-          const { quantityPurchased, totalCost, measurement } =
-            updatedIngredient;
-          if (quantityPurchased > 0 && totalCost > 0) {
-            switch (measurement) {
-              case "kg":
-              case "liters":
-                updatedIngredient.unitPrice =
-                  totalCost / (quantityPurchased * 1000);
-                break;
-              case "g":
-              case "ml":
-                updatedIngredient.unitPrice = totalCost / quantityPurchased;
-                break;
-              case "units":
-              default:
-                updatedIngredient.unitPrice = totalCost / quantityPurchased;
-                break;
-            }
-          }
+        if (name === "quantityPurchased" || name === "purchaseCost") {
+          const { quantityPurchased, purchaseCost } = updatedIngredient;
+          updatedIngredient.unitPrice = calculateUnitPrice(
+            quantityPurchased,
+            purchaseCost
+          );
+        }
+
+        if (name === "quantityUsed") {
+          const { unitPrice, quantityUsed } = updatedIngredient;
+          updatedIngredient.usedCost = calculateUsedCost(
+            unitPrice,
+            quantityUsed
+          );
         }
 
         return updatedIngredient;
@@ -181,6 +185,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
       return ingredient;
     });
     setRecipe({ ...recipe, ingredients: newIngredients });
+    calculateResults(); // Calculate the results immediately after ingredient change
   };
 
   const addIngredient = () => {
@@ -191,12 +196,10 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
         {
           name: "",
           quantityPurchased: 0,
-          measurement: "units",
-          totalCost: 0,
+          purchaseCost: 0,
           unitPrice: 0,
           quantityUsed: 0,
-          quantityUsedMeasurement: "units",
-          photo: "",
+          usedCost: 0,
           ingredientNotes: "",
         },
       ],
@@ -206,6 +209,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
   const handleDeleteIngredient = (index: number) => {
     const newIngredients = recipe.ingredients.filter((_, i) => i !== index);
     setRecipe({ ...recipe, ingredients: newIngredients });
+    calculateResults(); // Calculate the results immediately after deleting ingredient
   };
 
   const handleReset = () => {
@@ -333,23 +337,22 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
             <h2 className="text-xl font-bold">Ingredients Setting</h2>
             <div className="p-4 border my-2">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
+                <thead className="bg-gray-50 hidden md:table-header-group">
+                  <tr className="md:flex justify-between ">
                     {[
-                      "Ingredient Name",
-                      "Quantity Purchased",
-                      "Measurement",
-                      "purchased Cost",
+                      "Name",
+                      "Qty Purchased",
+                      "Purchase Cost",
                       "Unit Price",
-                      "Quantity Used",
-                      "Used Measurement",
-                      "Ingredient Notes",
+                      "Qty Used",
+                      "Used Cost",
+                      "Notes",
                       "Action",
                     ].map((label, i) => {
                       return (
                         <th
                           key={i}
-                          className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className=" px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
                           {label}
                         </th>
@@ -359,7 +362,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recipe.ingredients.map((ingredient, index) => (
-                    <tr key={index}>
+                    <tr key={index} className="flex flex-col md:table-row">
                       <IngredientForm
                         ingredient={ingredient}
                         index={index}
@@ -369,8 +372,8 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
                       />
                     </tr>
                   ))}
-                  <tr>
-                    <td colSpan={9} className="px-4 py-2">
+                  <tr className="flex flex-col md:table-row">
+                    <td colSpan={8} className="px-4 py-2">
                       <button
                         type="button"
                         onClick={addIngredient}

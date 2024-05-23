@@ -2,8 +2,6 @@
 
 import { Ingredient } from "../types";
 
-const measurements = ["kg", "g", "liters", "ml", "units"];
-
 interface IngredientFormProps {
   ingredient: Ingredient;
   index: number;
@@ -18,19 +16,33 @@ interface IngredientFormProps {
 }
 
 const TdInput: React.FC<{
+  label: string;
   value: string | number;
   type: string;
   name: string;
   placeholder: string;
   index: number;
-  isUpdate?: boolean;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     index: number
   ) => void;
-}> = ({ value, type, name, placeholder, index, handleChange }) => {
+  readOnly?: boolean;
+}> = ({
+  label,
+  value,
+  type,
+  name,
+  placeholder,
+  index,
+  handleChange,
+  readOnly,
+  ...props
+}) => {
   return (
-    <td className="md:px-4 md:py-2">
+    <div className="md:px-4 md:py-2 mb-4 md:mb-0">
+      <label className="block text-gray-700 text-sm font-bold mb-2 md:hidden">
+        {label}
+      </label>
       <input
         type={type}
         name={name}
@@ -39,8 +51,10 @@ const TdInput: React.FC<{
         onChange={(e) => handleChange(e, index)}
         className="mt-1 block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         placeholder={placeholder}
+        readOnly={readOnly}
+        {...props}
       />
-    </td>
+    </div>
   );
 };
 
@@ -52,8 +66,9 @@ const IngredientForm: React.FC<IngredientFormProps> = ({
   isUpdate,
 }) => {
   return (
-    <>
+    <div className="md:flex md:items-center md:space-x-4">
       <TdInput
+        label="Name"
         value={ingredient.name}
         type="text"
         name="name"
@@ -61,76 +76,67 @@ const IngredientForm: React.FC<IngredientFormProps> = ({
         index={index}
         handleChange={handleIngredientChange}
       />
-      <TdInput
-        value={ingredient.quantityPurchased}
-        type="number"
-        name="quantityPurchased"
-        placeholder="Quantity Purchased"
-        index={index}
-        handleChange={handleIngredientChange}
-      />
-      <td className="md:px-4 py-2 px-1">
-        <select
-          name="measurement"
-          value={ingredient.measurement}
-          onChange={(e) => handleIngredientChange(e, index)}
-          className="mt-1 border block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-        >
-          {measurements.map((measurement) => (
-            <option key={measurement} value={measurement}>
-              {measurement}
-            </option>
-          ))}
-        </select>
-      </td>
-      <TdInput
-        value={ingredient.totalCost}
-        type="number"
-        name="totalCost"
-        placeholder="Total Cost $"
-        index={index}
-        handleChange={handleIngredientChange}
-      />
-      <TdInput
-        value={ingredient.unitPrice}
-        type="number"
-        name="unitPrice"
-        placeholder="Unit Price"
-        index={index}
-        handleChange={handleIngredientChange}
-      />
-      <TdInput
-        value={ingredient.quantityUsed}
-        type="number"
-        name="quantityUsed"
-        placeholder="Quantity Used"
-        index={index}
-        handleChange={handleIngredientChange}
-      />
-      <td className="md:px-4 py-2">
-        <select
-          name="quantityUsedMeasurement"
-          value={ingredient.quantityUsedMeasurement}
-          onChange={(e) => handleIngredientChange(e, index)}
-          className="mt-1 border block w-full pl-3 md:pr-10 py-2 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-        >
-          {measurements.map((measurement) => (
-            <option key={measurement} value={measurement}>
-              {measurement}
-            </option>
-          ))}
-        </select>
-      </td>
-      <td className="md:px-4 py-2">
-        <textarea
-          name="ingredientNotes"
-          value={ingredient.ingredientNotes}
-          onChange={(e) => handleIngredientChange(e, index)}
-          className="mt-1 block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          placeholder="Ingredient Notes"
+      <div className="flex space-x-2 items-end">
+        <TdInput
+          label="Qty Purchased"
+          value={ingredient.quantityPurchased}
+          type="number"
+          name="quantityPurchased"
+          placeholder="Qty Purchased"
+          index={index}
+          handleChange={handleIngredientChange}
         />
-      </td>
-      <td className="px-4 py-2">
+        <TdInput
+          label="Purchase Cost"
+          value={ingredient.purchaseCost}
+          type="number"
+          name="purchaseCost"
+          placeholder="Purchase Cost"
+          index={index}
+          handleChange={handleIngredientChange}
+        />
+        <TdInput
+          label="Unit Price"
+          value={ingredient.unitPrice}
+          type="number"
+          name="unitPrice"
+          placeholder="Unit Price"
+          index={index}
+          handleChange={handleIngredientChange}
+          readOnly
+        />
+      </div>
+      <div className="flex space-x-2">
+        <TdInput
+          label="Qty Used"
+          value={ingredient.quantityUsed}
+          type="number"
+          name="quantityUsed"
+          placeholder="Qty Used"
+          index={index}
+          handleChange={handleIngredientChange}
+        />
+        <TdInput
+          label="Used Cost"
+          value={ingredient.usedCost}
+          type="number"
+          name="usedCost"
+          placeholder="Used Cost"
+          index={index}
+          handleChange={handleIngredientChange}
+          readOnly
+        />
+      </div>
+      <TdInput
+        label="Notes"
+        value={ingredient.ingredientNotes}
+        type="text"
+        name="ingredientNotes"
+        placeholder="Notes"
+        index={index}
+        handleChange={handleIngredientChange}
+      />
+      <div className="md:px-4 py-2 mt-4 md:mt-0 ">
         <button
           type="button"
           onClick={() => handleDeleteIngredient(index)}
@@ -138,8 +144,8 @@ const IngredientForm: React.FC<IngredientFormProps> = ({
         >
           Delete
         </button>
-      </td>
-    </>
+      </div>
+    </div>
   );
 };
 

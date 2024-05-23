@@ -3,19 +3,19 @@ import mongoose from "mongoose";
 const IngredientSchema = new mongoose.Schema({
   name: { type: String, required: true },
   quantityPurchased: { type: Number, required: true },
-  measurement: { type: String, required: true },
+  purchaseCost: { type: Number, required: true },
   unitPrice: { type: Number, required: true },
-  totalCost: { type: Number },
   quantityUsed: { type: Number, required: true },
-  quantityUsedMeasurement: { type: String, required: true },
-  photo: { type: String },
+  usedCost: { type: Number, required: true },
   ingredientNotes: { type: String }, // 메모 필드 추가
 });
 
 IngredientSchema.pre("save", function (next) {
   const ingredient = this;
-  ingredient.totalCost = ingredient.unitPrice * ingredient.quantityPurchased;
+  ingredient.unitPrice = ingredient.purchaseCost / ingredient.quantityPurchased;
+  ingredient.usedCost = ingredient.unitPrice * ingredient.quantityUsed;
   next();
 });
 
-export default mongoose.models.Ingredient || mongoose.model("Ingredient", IngredientSchema);
+export default mongoose.models.Ingredient ||
+  mongoose.model("Ingredient", IngredientSchema);
