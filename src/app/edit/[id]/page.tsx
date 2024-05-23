@@ -12,12 +12,8 @@ import Main from "@/app/components/Main";
 import LoadingBlog from "@/app/components/LoadingBlog";
 import { Result } from "@/app/types";
 import { useAuth } from "@/context/AuthContext";
-interface RecipeFormProps {
-  recipe: Recipe;
-  result: Result | undefined;
-  isUpdate: boolean;
-}
-const EditRecipe: React.FC<RecipeFormProps> = () => {
+
+const EditRecipe: React.FC = () => {
   const { userId, session, status } = useAuth();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [result, setResult] = useState<Result | undefined>(undefined);
