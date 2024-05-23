@@ -13,20 +13,23 @@ interface mypageProps extends Recipe {
 }
 
 const MyPage: React.FC = () => {
-  const { userId, signIn } = useAuth();
+  const { userId, signIn, session, status } = useAuth();
 
   const [data, setData] = useState<mypageProps[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userId) {
+    if (status === "loading") return;
+    console.log(status, userId); // 디버깅을 위해 status와 userId를 출력
+    if (status === "unauthenticated" || !userId) {
       alert("Please sign in to view your recipes");
       signIn();
     }
+
     if (userId) {
       fetchUserRecipes();
     }
-  }, []);
+  }, [status, userId, session]);
 
   const fetchUserRecipes = async () => {
     try {
@@ -122,14 +125,17 @@ const MyPage: React.FC = () => {
                     href={`/mypage/${recipe._id}`}
                     className="group block overflow-hidden flex flex-col"
                   >
-                    <img
-                      src={
-                        recipe.photo.length === 0 ? defaultImg : recipe.photo
-                      }
-                      alt=""
-                      className="h-[200px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[200px]"
-                    />
-
+                    <div className="w-full h-[200px] relative">
+                      <Image
+                        src={
+                          recipe.photo.length === 0 ? defaultImg : recipe.photo
+                        }
+                        alt="img"
+                        objectFit="cover"
+                        layout="fill"
+                        className="h-[200px] w-full object-cover transition duration-500 group-hover:scale-105 sm:h-[200px]"
+                      />
+                    </div>
                     <div className="relative bg-white pt-3 flex justify-around items-center">
                       <h3 className="text-md text-gray-700 group-hover:underline group-hover:underline-offset-4">
                         {recipe.name}

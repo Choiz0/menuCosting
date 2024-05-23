@@ -11,7 +11,7 @@ interface MainProps {
   exRecipe: Recipe;
   exResult?: Result;
   isUpdate?: boolean;
-  userId: string | null;
+  userId?: string | null;
 }
 
 const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
