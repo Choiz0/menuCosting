@@ -94,7 +94,7 @@ const RecipePage: React.FC = () => {
           <div className="flex justify-center">
             <Image
               className="object-cover w-full h-64"
-              src={costing?.photo || defaultImg}
+              src={recipe?.photo || defaultImg}
               alt={recipe.name}
               width={200}
               height={200}
