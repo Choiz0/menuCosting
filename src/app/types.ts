@@ -38,6 +38,8 @@ export interface Recipe {
     kitchenRevenue?: number; // 주방 수익
     labourCost?: number; // 노동비
     costPerPortionWithLabour?: number; // 한 인분당 비용
+    grossProfitMargin?: number; // 총 이익률
+    contributionMargin?: number; // 기여 마진
   }
   
   
@@ -57,4 +59,93 @@ export interface NumInputProps {
   placeholder?: string;
   classNameAdd?: string;
   mesure?: string;
-  }
+}
+  
+export interface Metrics {
+  SellingPrice: string;
+  TotalCost: string;
+  GrossProfit: string;
+  ContributionMargin: string;
+  GrossProfitMargin: string;
+  FoodCostPercentage: string;
+  FoodCostPercentagewithLabor: string;
+  GrossProfitMarginwithLabor: string;
+  ContributionMarginwithLabor: string;
+}
+
+export interface Averages {
+  FoodCostPercentage: string;
+  LaborCostPercentage: string;
+  CombinedFoodandLaborCostPercentage: string;
+  TypicalProfitMargins: string;
+}
+
+export interface Comparison {
+  FoodCostPercentage: string;
+  CombinedFoodandLaboCostPercentage: string;
+  ProfitMargin: string;
+}
+
+export interface PricingStrategy {
+  Advantages: string;
+  Disadvantages: string;
+  Example: string;
+  AustralianMarketComparison: {
+    AverageCostPlusPricingMargin?: string;
+    TypicalTargetProfitMargin?: string;
+    Analysis: string;
+    Approach?: string;
+    CommonPractice?: string;
+    Usage?: string;
+  };
+}
+
+export interface PricingStrategiesAnalysis {
+  CostBasedPricing: {
+    CostPlusPricing: PricingStrategy;
+    TargetProfitPricing: PricingStrategy;
+  };
+  DemandBasedPricing: PricingStrategy;
+  CompetitionBasedPricing: PricingStrategy;
+  NewProductPricing: {
+    PriceSkimming: PricingStrategy;
+    PenetrationPricing: PricingStrategy;
+  };
+}
+
+export interface ComparisonWithAustralianMarket {
+  FoodCostPercentage: {
+    YourCurrent: string;
+    AustralianAverage: string;
+    Analysis: string;
+  };
+  CombinedFoodandLaborCostPercentage: {
+    YourCurrent: string;
+    AustralianAverage: string;
+    Analysis: string;
+  };
+  ProfitMargins: {
+    YourCurrent: string;
+    AustralianAverage: string;
+    Analysis: string;
+  };
+}
+
+export interface RecommendedPricing {
+  SuggestedNewPrice: string;
+  Rationale: string;
+  PotentialIssuewithPriceIncrease: string;
+  OptimalAdjustmentStrategy: {
+    FoodPriceAdjustment: string;
+    LaborCostManagement: string;
+  };
+}
+
+export interface AnalysisData {
+  CurrentMetrics: Metrics;
+  IndustryAverages: Averages;
+  Comparison: Comparison;
+  PricingStrategiesAnalysis: PricingStrategiesAnalysis;
+  ComparisonwithAustralianMarket: ComparisonWithAustralianMarket;
+  RecommendedPricing: RecommendedPricing;
+}

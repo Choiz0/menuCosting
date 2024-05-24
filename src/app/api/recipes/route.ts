@@ -31,11 +31,12 @@ export async function POST(req: NextRequest) {
 
 
 // Handle GET requests
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest,) {
   await dbConnect();
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
+  
 
     console.log("Received userId:", userId); // 디버깅을 위해 userId를 출력
 

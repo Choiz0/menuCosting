@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Recipe, Result } from "@/app/types";
 import Analysis from "@/app/components/Analysis";
+import axios from "axios";
 
 interface AiResultProps {
   recipe: Recipe;
@@ -35,40 +36,37 @@ const AiResult: React.FC<AiResultProps> = ({ recipe, result }) => {
     }
   }, []);
 
-  const initialPrompt = `Please provide a detailed price analysis to increase the profit margin for the recipe with the following details: recipe name: ${
+  const initialPrompt = `Please provide a detailed price analysis to increase the profit margin for the recipe with the following details:recipe name:${
     recipe?.name
-  }, total cost: ${result?.totalCost}, gross profit: ${
+  },totalcost:${result?.totalCost},grossprofit:${
     result?.grossProfit
-  }, food cost percentage: ${
+  },foodcostpercentage:${
     result?.foodCostPercentage
-  }, food cost percentage with labour: ${
+  },foodcostpercentagewithlabour:${
     result?.foodCostPercentageWithLabour
-  }, cost per dish: ${result?.costPerDish}, contribution margin with labour: ${
+  },costperdish:${result?.costPerDish},contributionmarginwithlabour:${
     result?.contributionMarginWithLabour
-  }, menu selling price: ${result?.menuSellingPrice}, less GST: ${
+  },menusellingprice:${result?.menuSellingPrice},lessGST:${
     result?.lessGst
-  }, kitchen revenue: ${result?.kitchenRevenue}, labour cost: ${
+  },kitchenrevenue:${result?.kitchenRevenue},labourcost:${
     result?.labourCost
-  }, cost per portion with labour: ${
+  },costperportionwithlabour:${
     result?.costPerPortionWithLabour
-  }, ingredients: ${JSON.stringify(recipe?.ingredients)}, number of servings: ${
+  },ingredients:${JSON.stringify(recipe?.ingredients)},numberofservings:${
     recipe?.numServings
-  }, selling price per serving: ${
+  },sellingpriceperserving:${
     recipe?.sellingPricePerServing
-  }, labour cost per hour: ${recipe?.labourCostPerHour}, prep time: ${
+  },labourcostperhour:${recipe?.labourCostPerHour},preptime:${
     recipe?.timeTaken
-  }, and GST percentage: ${
+  },andGSTpercentage:${
     recipe?.gstPercentage
-  },(anditional question): ${additionalInfo}. Please refer my data and your role is 1. Analyze the impact of increasing the menu selling price by 5%, 10%, and 15%. Calculate the new selling price, gross profit, and food cost percentages for each scenario. 2. Analyze the impact of decreasing the total cost by 5%, 10%, and 15%.
- Calculate the new total cost, gross profit, and ingredient cost ratios for each scenario. 3. Compare the cost of ingredients in this recipe to the average cost of similar ingredients in Australia. Provide specific comparisons and suggest alternative ingredients or suppliers that could reduce costs without compromising quality. 4. Provide strategies to optimize the food cost percentage and gross profit.  Explain specific actions that can be taken to reduce ingredient costs or labour costs while maintaining or improving the current food cost
-   percentage and gross profit. 5. Compare the profit margin of this recipe to the average profit margin of similar restaurants in Australia.  Provide the average profit margin for similar restaurants in Australia and analyze how this recipe's profit margin compares to the industry
-     average. Suggest specific strategies to achieve or exceed the average profit margin in Australia.  ex) {"analysis":{"impactOfIncreasingMenuSellingPrice":{"5%Increase":{"newSellingPrice":26.25,"grossProfit":18.7,"foodCostPercentage":28.76},"10%Increase":{"newSellingPrice":27.5,"grossProfit":19.95,"foodCostPercentage":27.45},"15%Increase":{"newSellingPrice":28.75,"grossProfit":21.2,"foodCostPercentage":26.26}},"impactOfDecreasingTotalCost":{"5%Decrease":{"newTotalCost":7.1725,"grossProfit":17.8275,"ingredientCostRatio":28.8},"10%Decrease":{"newTotalCost":6.795,"grossProfit":18.205,"ingredientCostRatio":27.18},"15%Decrease":{"newTotalCost":6.4175,"grossProfit":18.5825,"ingredientCostRatio":25.67}},"ingredientCostComparison":{"octopusBabyFresh":{"currentCost":4.91,"averageCostInAustralia":4.5,"suggestedAction":"Consider sourcing from suppliers offering a price closer to the average to save on costs."},"citrusOil":{"currentCost":0.14,"averageCostInAustralia":0.12,"suggestedAction":"Negotiate with current supplier or find an alternative supplier to reduce costs."},"herbSalad":{"currentCost":0,"averageCostInAustralia":0,"suggestedAction":"No action required as cost is already optimized."},"sweetPotatoPuree":{"currentCost":0,"averageCostInAustralia":0,"suggestedAction":"No action required as cost is already optimized."}},"strategiesToOptimizeFoodCostAndGrossProfit":{"reduceIngredientCosts":{"actions":["Negotiate better pricing with current suppliers.","Source alternative suppliers for better rates.","Buy ingredients in bulk to take advantage of volume discounts."]},"reduceLabourCosts":{"actions":["Streamline kitchen operations to reduce prep time.","Cross-train staff to improve efficiency.","Utilize part-time or temporary staff during peak hours."]},"maintainOrImproveFoodCostPercentage":{"actions":["Regularly review and adjust portion sizes to minimize waste.","Implement strict inventory management to reduce spoilage and overstocking.","Introduce seasonal menu items to take advantage of lower-cost ingredients."]}},"profitMarginComparison":{"currentProfitMargin":70.7,"averageProfitMarginInAustralia":65,"analysis":"The current profit margin of 70.7% is above the industry average of 65%. This indicates that the recipe is performing well in terms of profitability.","strategiesToAchieveOrExceedAverageProfitMargin":{"actions":["Continue to monitor and adjust pricing based on market trends.","Focus on maintaining high-quality ingredients while managing costs.","Invest in marketing to increase sales volume and capitalize on the high profit margin."]}},"additionalInfoAnswer":Answer ther this question ${additionalInfo}.provide few sentences "}}
-Please provide a detailed and practical analysis, focusing on specific price adjustments and market comparisons. Avoid any abstract, repetitive, or unrealistic suggestions and provide json.`;
+  },(additionalquestion):${additionalInfo},grossprofitMargin%:${
+    result?.grossProfitMargin
+  },contributionMargin%:${
+    result?.contributionMargin
+  }answerexample:{ CurrentMetrics: { SellingPrice: "$10.00", TotalCost: "$7.35", GrossProfit: "$2.65", ContributionMargin: "$2.65", GrossProfitMargin: "26.5%", FoodCostPercentage: "35.2%", FoodCostPercentagewithLabor: "80.85%", GrossProfitMarginwithLabor: "26.5%", ContributionMarginwithLabor: "26.5%", }, IndustryAverages: { FoodCostPercentage: "28-35%", LaborCostPercentage: "25-30%", CombinedFoodandLaborCostPercentage: "53-65%", TypicalProfitMargins: "3-6%", }, Comparison: { FoodCostPercentage: "Your current food cost percentage (35.2%) is within the average range for Australian restaurants.", CombinedFoodandLaboCostPercentage: "Your combined percentage (80.85%) is significantly higher than the average, which suggests higher costs relative to revenue.", ProfitMargin: "Your current profit margin is lower compared to the average, indicating potential issues with cost management or pricing strategy.", }, PricingStrategiesAnalysis: { CostBasedPricing: { CostPlusPricing: { Advantages: "Simple and clear calculation. Ensures that basic costs are covered and a stable profit is secured.", Disadvantages: "Does not reflect market demand and competitive environment. Difficult to accurately calculate costs during inflation or cost fluctuations.", Example: "With a current cost of $7.35, adding a 30% margin results in a price of $7.35 * 1.30 = $9.56. This method would keep the price around the current $10.00.", AustralianMarketComparison: { AverageCostPlusPricingMargin: "30%", Analysis: "This approach is common in the Australian market, where restaurants typically add a margin of 25-30% to their costs.", }, }, TargetProfitPricing: { Advantages: "Ensures a specific target profit based on the break-even point.", Disadvantages: "Difficult to forecast demand and may not achieve the set target profit.", Example: "With a target profit margin of 20%, adding this to the total cost of $7.35 results in a price of $7.35 * 1.20 = $8.82.", AustralianMarketComparison: { TypicalTargetProfitMargin: "15-20%", Analysis: "Target profit pricing is used in the Australian market to ensure profitability, typically aiming for a 15-20% profit margin.", }, }, }, DemandBasedPricing: { Advantages: "Sets prices based on customer perception of value and demand intensity. Can increase customer satisfaction and allow for higher prices.", Disadvantages: "Difficult to accurately gauge customer perception of value. Prices may need frequent adjustments based on demand fluctuations.", Example: "Given the unique and high-quality ingredients, 잡채 can be priced at $12.00 to reflect its premium value.", AustralianMarketComparison: { Approach: "Value-based pricing", Analysis: "In Australia, value-based pricing is often used for premium products, setting prices according to perceived value rather than cost.", }, }, CompetitionBasedPricing: { Advantages: "Maintains competitiveness by considering competitor prices.", Disadvantages: "May not fully account for own costs and profitability.", Example: "If nearby competitors are selling 잡채 for $10.00, you could match this price or set it slightly higher at $11.00.", AustralianMarketComparison: { CommonPractice: "Competitive pricing", Analysis: "Australian restaurants frequently use competitive pricing to stay in line with market rates, ensuring they are neither underpriced nor overpriced.", }, }, NewProductPricing: { PriceSkimming: { Advantages: "Quickly recovers initial costs and establishes a premium image.", Disadvantages: "May lose some customers due to high initial prices.", Example: "Set the price of 잡채 at $15.00 initially to maximize early profits, then gradually lower it to $12.00.", AustralianMarketComparison: { Usage: "High for premium launches", Analysis: "Price skimming is used in Australia for new, high-demand products to capitalize on early adopters willing to pay more.", }, }, PenetrationPricing: { Advantages: "Quickly increases market share.", Disadvantages: "Initial profits are lower.", Example: "Set the price of 잡채 at $8.00 initially to attract customers, then raise it to $10.00.", AustralianMarketComparison: { Usage: "Common for new entries", Analysis: "Penetration pricing is common in the Australian market for new businesses aiming to establish a customer base quickly.", }, }, }, }, ComparisonwithAustralianMarket: { FoodCostPercentage: { YourCurrent: "35.2%", AustralianAverage: "28-35%", Analysis: "Your current food cost percentage is within the typical range for Australian restaurants.", }, CombinedFoodandLaborCostPercentage: { YourCurrent: "80.85%", AustralianAverage: "53-65%", Analysis: "Your combined food and labor cost percentage is significantly higher than the average, indicating higher relative costs.", }, ProfitMargins: { YourCurrent: "26.5%", AustralianAverage: "3-6%", Analysis: "Your gross profit margin is higher than the typical profit margins in the industry, but overall profitability is impacted by high labor costs.", }, }, RecommendedPricing: { "Suggested New Price": "$12.00", Rationale: "Combines cost-based and demand-based pricing. 잡채's unique and high-quality ingredients justify a higher price, and $12.00 ensures adequate profit while remaining reasonable to customers.", PotentialIssuewithPriceIncrease: "Raising prices may lead to losing price-sensitive customers, especially if competitors maintain lower prices.", OptimalAdjustmentStrategy: { FoodPriceAdjustment: "Increase the price of 잡채 to $12.00, while keeping other menu items at their current prices or with slight increases. This can increase overall sales without significantly losing customers.", LaborCostManagement: "Optimize labor schedules to manage labor costs effectively. Adjust staffing levels based on demand to minimize labor expenses.", }, }, }; anwer with json format`;
+
   const handleSubmit = async () => {
-    if (useCount >= 3) {
-      alert("You have reached the limit of 3 uses per day.");
-      return;
-    }
     if (
       recipe.name.length === 0 ||
       result.totalCost === 0 ||
@@ -86,23 +84,27 @@ Please provide a detailed and practical analysis, focusing on specific price adj
       alert("Please fill in all the required fields");
       return;
     }
-    setIsLoading(true);
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt: initialPrompt }),
-    });
 
-    const data = await res.json();
-    console.log(data.result);
-    setResponse(data.result);
-    setIsLoading(false);
-    setUseCount((prevCount) => prevCount + 1);
-    localStorage.setItem("useCount", (useCount + 1).toString());
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post(
+        "/api/chat",
+        { prompt: initialPrompt },
+        { timeout: 30000 } // 30초 타임아웃 설정
+      );
+
+      console.log(res.data.result);
+      setResponse(res.data.result);
+      setUseCount((prevCount) => prevCount + 1);
+      localStorage.setItem("useCount", (useCount + 1).toString());
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while fetching data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
-  console.log(response);
 
   return (
     <div>
@@ -118,31 +120,25 @@ Please provide a detailed and practical analysis, focusing on specific price adj
         placeholder="Add any additional qestions..."
         className="border rounded p-2 w-full h-12"
       />
-      <button
-        onClick={handleSubmit}
-        className="border  p-2 m- rounded bg-teal-400 text-white font-bold py-2 px-4  focus:outline-none focus:shadow-outline hover:bg-teal-600 hover:text-white"
-      >
+      <button onClick={handleSubmit} className="btn-fill-blue">
         ChatGPT Analysis
       </button>
       {response && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="btn-fill-green mt-2"
           disabled={!response}
         >
           View Analysis
         </button>
       )}
-
-      <div>
-        {isOpen && response && (
-          <Analysis
-            data={JSON.parse(response)}
-            setIsOpen={setIsOpen}
-            isOpen={isOpen}
-          />
-        )}
-      </div>
+      {isOpen && (
+        <Analysis
+          data={JSON.parse(response)}
+          setIsOpen={setIsOpen}
+          isOpen={isOpen}
+        />
+      )}
     </div>
   );
 };

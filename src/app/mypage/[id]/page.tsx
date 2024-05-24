@@ -82,11 +82,11 @@ const RecipePage: React.FC = () => {
   if (!recipe) {
     return (
       <div>
-        <LoadingBlog />
+        <h1>Recipe not found</h1>
       </div>
     );
   }
-
+  // console.log("costing:", costing);
   return (
     <div>
       <div className="m-4 flex justify-between flex-col md:flex-row">

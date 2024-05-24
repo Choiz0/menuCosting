@@ -133,6 +133,9 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
       (totalCost / kitchenRevenue) * 100 || 0;
     const costPerDish = totalCost / recipe.numServings;
     const contributionMarginWithLabour = kitchenRevenue - totalCost;
+    const contributionMargin =
+      (contributionMarginWithLabour / kitchenRevenue) * 100;
+    const grossProfitMargin = (grossProfit / kitchenRevenue) * 100;
 
     setResult({
       totalCost,
@@ -147,6 +150,8 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
       kitchenRevenue,
       labourCost,
       costPerPortionWithLabour: totalCost / recipe.numServings,
+      grossProfitMargin,
+      contributionMargin,
     });
   };
   useEffect(() => {
@@ -305,7 +310,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
             <button
               type="button"
               onClick={handleUpdate}
-              className="mt-1 md:mb-2 px-4 py-2 md:w-36 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="btn-fill-blue w-36"
             >
               Update
             </button>
@@ -338,11 +343,11 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
             <div className="p-4 border my-2">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 hidden md:table-header-group">
-                  <tr className="md:flex justify-between ">
+                  <tr className="md:grid md:grid-cols-8 ">
                     {[
                       "Name",
                       "Qty Purchased",
-                      "Purchase Cost",
+                      "Purchased Cost",
                       "Unit Price",
                       "Qty Used",
                       "Used Cost",
@@ -352,7 +357,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
                       return (
                         <th
                           key={i}
-                          className=" px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className=" px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
                           {label}
                         </th>
@@ -377,7 +382,7 @@ const Main: React.FC<MainProps> = ({ exRecipe, exResult, isUpdate }) => {
                       <button
                         type="button"
                         onClick={addIngredient}
-                        className="mt-1 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="btn-fill-blue w-full md:w-36"
                       >
                         Add Ingredient
                       </button>

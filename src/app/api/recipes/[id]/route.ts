@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) { 
   await dbConnect();
   const { id } = params;
+  console.log("recivedId", id);
 
   if (!id) {
     return NextResponse.json({ success: false, error: "ID is required" }, { status: 400 });

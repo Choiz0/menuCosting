@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-deploy":"next build && next export"
+    "vercel-deploy": "next build && next export"
   },
   "dependencies": {
+    "ai": "^3.1.13",
     "axios": "^1.7.1",
     "chart.js": "^4.4.3",
     "mongoose": "^8.4.0",

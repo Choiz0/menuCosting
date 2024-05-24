@@ -29,7 +29,7 @@ const Landing = () => {
               </p>
               <div className="flex justify-center lg:justify-start mt-6">
                 <button
-                  className="px-4 py-3 bg-gray-900 text-gray-200 text-xs font-semibold rounded hover:bg-gray-800"
+                  className="btn-fill-green"
                   onClick={async () => {
                     await signIn("google");
                   }}

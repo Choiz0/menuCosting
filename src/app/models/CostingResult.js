@@ -19,6 +19,8 @@ const CostingResultSchema = new mongoose.Schema(
     kitchenRevenue: { type: Number, required: true },
     labourCost: { type: Number },
     costPerPortionWithLabour: { type: Number },
+    contributionMargin: { type: Number },
+    grossProfitMargin: { type: Number },
   },
   { timestamps: true }
 );

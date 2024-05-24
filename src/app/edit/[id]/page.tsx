@@ -56,9 +56,9 @@ const EditRecipe: React.FC = () => {
   }
 
   return (
-    <div>
+    <>
       <Main exRecipe={recipe} exResult={result} isUpdate={true} />
-    </div>
+    </>
   );
 };
 

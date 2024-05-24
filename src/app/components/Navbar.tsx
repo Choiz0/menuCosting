@@ -88,10 +88,7 @@ const Navbar = () => {
             <div className="hidden md:absolute md:flex md:items-center md:justify-end md:inset-y-0 md:right-0">
               <div className="inline-flex rounded-full shadow">
                 {session ? (
-                  <button
-                    onClick={() => signOut()}
-                    className="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
+                  <button onClick={() => signOut()} className="btn-fill-indigo">
                     Sign Out
                   </button>
                 ) : (
@@ -99,7 +96,7 @@ const Navbar = () => {
                     onClick={async () => {
                       await signIn("google");
                     }}
-                    className="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="btn-fill-green"
                   >
                     Sign In
                   </button>
@@ -133,10 +130,7 @@ const Navbar = () => {
             AI Search Recipe
           </Link>
           {session ? (
-            <button
-              onClick={() => signOut()}
-              className="block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
-            >
+            <button onClick={() => signOut()} className="btn-fill-indigo">
               Sign Out
             </button>
           ) : (
@@ -144,7 +138,7 @@ const Navbar = () => {
               onClick={async () => {
                 await signIn("google");
               }}
-              className="block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+              className="btn-fill-green"
             >
               Sign In
             </button>

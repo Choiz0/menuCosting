@@ -148,6 +148,22 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
         tooltip:
           "The cost per serving including labor costs. This value is closely related to final pricing. Calculation: Total Cost / Number of Servings",
       },
+      {
+        label: "Gross Profit Margin",
+        value: `${result?.grossProfitMargin?.toFixed(2)}%`,
+        description: "Profit margin for the recipe",
+        bgColorClass: "bg-green-50",
+        tooltip:
+          "The profit margin for the recipe. This value is essential for evaluating profitability. Calculation: (Gross Profit / Kitchen Revenue) * 100",
+      },
+      {
+        label: "Contribution Margin",
+        value: `${result?.contributionMargin?.toFixed(2)}%`,
+        description: "Percentage of revenue spent on food including labour",
+        bgColorClass: "bg-blue-50",
+        tooltip:
+          "The percentage of revenue spent on ingredients including labor costs. This is a key factor in pricing and cost management. Calculation: (Contribution Margin / Kitchen Revenue) * 100",
+      },
     ],
   ];
 
@@ -159,7 +175,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
           <button
             type="button"
             onClick={handleSaveButton}
-            className="px-4 py-2 m-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="btn-fill-blue"
           >
             Save
           </button>

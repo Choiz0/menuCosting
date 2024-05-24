@@ -1,377 +1,169 @@
-import { defaultMaxListeners } from "events";
-import React from "react";
+"use client";
 
-interface ImpactOfIncrease {
-  newSellingPrice: number;
-  grossProfit: number;
-  foodCostPercentage: number;
-}
-
-interface ImpactOfDecrease {
-  newTotalCost: number;
-  grossProfit: number;
-  ingredientCostRatio: number;
-}
-
-interface IngredientCostComparison {
-  currentCost: number;
-  averageCostInAustralia: number;
-  suggestedAction: string;
-}
-
-interface Strategies {
-  actions: string[];
-}
-
-interface ProfitMarginComparison {
-  currentProfitMargin: number;
-  averageProfitMarginInAustralia: number;
-  analysis: string;
-  strategiesToAchieveOrExceedAverageProfitMargin: Strategies;
-}
-
-interface Analysis {
-  impactOfIncreasingMenuSellingPrice: {
-    "5%Increase": ImpactOfIncrease;
-    "10%Increase": ImpactOfIncrease;
-    "15%Increase": ImpactOfIncrease;
-  };
-  impactOfDecreasingTotalCost: {
-    "5%Decrease": ImpactOfDecrease;
-    "10%Decrease": ImpactOfDecrease;
-    "15%Decrease": ImpactOfDecrease;
-  };
-  ingredientCostComparison: Record<string, IngredientCostComparison>;
-  strategiesToOptimizeFoodCostAndGrossProfit: {
-    reduceIngredientCosts: Strategies;
-    reduceLabourCosts: Strategies;
-    maintainOrImproveFoodCostPercentage: Strategies;
-  };
-  profitMarginComparison: ProfitMarginComparison;
-  additionalInfoAnswer?: string;
-}
+import React, { useEffect } from "react";
+import { AnalysisData } from "../types";
 
 interface AnalysisProps {
-  data: { analysis: Analysis };
+  data: AnalysisData;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  additionalInfoAnswer?: string;
 }
 
 const Analysis: React.FC<AnalysisProps> = ({ data, isOpen, setIsOpen }) => {
+  if (!isOpen) return null;
+
   const {
-    impactOfIncreasingMenuSellingPrice,
-    impactOfDecreasingTotalCost,
-    ingredientCostComparison,
-    strategiesToOptimizeFoodCostAndGrossProfit,
-    profitMarginComparison,
-    additionalInfoAnswer,
-  } = data.analysis;
+    CurrentMetrics,
+    IndustryAverages,
+    Comparison,
+    PricingStrategiesAnalysis,
+    ComparisonwithAustralianMarket,
+    RecommendedPricing,
+  } = data;
 
   return (
-    <>
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="fixed inset-0 bg-black opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-6xl w-full z-50 overflow-auto max-h-screen">
-            <h1 className="text-2xl font-bold">Analysis Results</h1>
-
-            <h2 className="text-xl font-semibold my-2">
-              Impact of Increasing Menu Selling Price
-            </h2>
-            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mb-8">
-              <thead className="text-left">
-                <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Increase
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    New Selling Price
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Gross Profit
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Food Cost Percentage
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {Object.entries(impactOfIncreasingMenuSellingPrice).map(
-                  ([key, value]) => (
-                    <tr key={key} className="odd:bg-gray-50">
-                      <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                        {key}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.newSellingPrice).toFixed(2)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.grossProfit).toFixed(2)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.foodCostPercentage).toFixed(2)}
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
-
-            <h2 className="text-xl font-semibold my-2">
-              Impact of Decreasing Total Cost
-            </h2>
-            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mb-8">
-              <thead className="text-left">
-                <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Decrease
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    New Total Cost
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Gross Profit
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Ingredient Cost Ratio
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {Object.entries(impactOfDecreasingTotalCost).map(
-                  ([key, value]) => (
-                    <tr key={key} className="odd:bg-gray-50">
-                      <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                        {key}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.newTotalCost).toFixed(2)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.grossProfit).toFixed(2)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {Number(value.ingredientCostRatio).toFixed(2)}
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
-
-            <h2 className="text-xl font-semibold my-2">
-              Ingredient Cost Comparison
-            </h2>
-            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mb-8">
-              <thead className="text-left">
-                <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Ingredient
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Current Cost
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Average Cost in Australia
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Suggested Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {ingredientCostComparison &&
-                  Object.entries(ingredientCostComparison).map(
-                    ([ingredient, details]) => (
-                      <tr key={ingredient} className="odd:bg-gray-50">
-                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                          {ingredient}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                          {Number(details.currentCost).toFixed(2)}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                          {Number(details.averageCostInAustralia).toFixed(2)}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                          {details.suggestedAction}
-                        </td>
-                      </tr>
-                    )
-                  )}
-              </tbody>
-            </table>
-
-            <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-              <div className="overflow-hidden shadow-md mb-8">
-                <div className="px-6 py-4 bg-blue-500 text-white font-bold uppercase rounded-tl-lg rounded-tr-lg">
-                  Strategies to Optimize Food Cost and Gross Profit
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <h3 className="text-lg font-bold mb-2">
-                    Reduce Ingredient Costs
-                  </h3>
-                  <ul>
-                    {strategiesToOptimizeFoodCostAndGrossProfit?.reduceIngredientCosts?.actions?.map(
-                      (action, index) => (
-                        <li key={index} className="flex items-center">
-                          <svg
-                            className="h-4 w-4 text-blue-500 mr-2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          {action}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <h3 className="text-lg font-bold mb-2">
-                    Reduce Labour Costs
-                  </h3>
-                  <ul>
-                    {strategiesToOptimizeFoodCostAndGrossProfit?.reduceLabourCosts?.actions?.map(
-                      (action, index) => (
-                        <li key={index} className="flex items-center">
-                          <svg
-                            className="h-4 w-4 text-blue-500 mr-2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          {action}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <h3 className="text-lg font-bold mb-2">
-                    Maintain or Improve Food Cost Percentage
-                  </h3>
-                  <ul>
-                    {strategiesToOptimizeFoodCostAndGrossProfit?.maintainOrImproveFoodCostPercentage?.actions?.map(
-                      (action, index) => (
-                        <li key={index} className="flex items-center">
-                          <svg
-                            className="h-4 w-4 text-blue-500 mr-2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          {action}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {data && (
+        <>
+          <div
+            className="fixed inset-0 bg-black opacity-50"
+            onClick={() => setIsOpen(false)}
+          ></div>
+          <div className="bg-white m-6 rounded-lg shadow-lg max-w-6xl w-full z-50 overflow-auto max-h-screen p-6">
+            <h1 className="text-2xl font-bold text-center mb-6">
+              Analysis Results
+            </h1>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Section title="Current Metrics" data={CurrentMetrics} />
+                <Section title="Industry Averages" data={IndustryAverages} />
               </div>
-            </div>
-
-            <div className="max-w-2xl mx-auto sm:px-6 lg:px-8 mt-6">
-              <div className="overflow-hidden shadow-md">
-                <div className="px-6 py-4 bg-blue-500 text-white font-bold uppercase rounded-tl-lg rounded-tr-lg">
-                  Profit Margin Comparison
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <div className="flex space-x-4">
-                    <p>
-                      Current Profit Margin:{" "}
-                      {Number(
-                        profitMarginComparison?.currentProfitMargin
-                      ).toFixed(2)}
-                      %
-                    </p>
-                    <div className="bg-blue-800 px-1 rounded-xl text-white">
-                      VS
-                    </div>
-                    <p>
-                      Average Profit Margin in Australia:{" "}
-                      {Number(
-                        profitMarginComparison?.averageProfitMarginInAustralia
-                      ).toFixed(2)}
-                      %
-                    </p>
-                  </div>
-                  <p>
-                    Analysis :<div>{profitMarginComparison?.analysis}</div>
-                  </p>
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <h3 className="text-lg font-bold mb-2">
-                    Strategies to Achieve or Exceed Average Profit Margin
-                  </h3>
-                  <ul>
-                    {profitMarginComparison?.strategiesToAchieveOrExceedAverageProfitMargin?.actions?.map(
-                      (action, index) => (
-                        <li key={index} className="flex items-center">
-                          <svg
-                            className="h-4 w-4 text-blue-500 mr-2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          {action}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-                <div className="p-6 bg-white border-b border-gray-200">
-                  <h3 className="text-lg font-bold mb-2">
-                    Additional your questions
-                  </h3>
-                  <ul>
-                    <svg
-                      className="h-4 w-4 text-blue-500 mr-2"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    {additionalInfoAnswer || ""}
-                  </ul>
-                </div>
-              </div>
+              <Section title="Comparison" data={Comparison} />
+              <TextSection
+                title="Pricing Strategies Analysis"
+                data={PricingStrategiesAnalysis}
+              />
+              <Section
+                title="Comparison with Australian Market"
+                data={ComparisonwithAustralianMarket}
+              />
+              <TextSection
+                title="Recommended Pricing"
+                data={RecommendedPricing}
+              />
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+              className="mt-6 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               Close
             </button>
           </div>
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
+
+const Section: React.FC<{ title: string; data: any }> = ({ title, data }) => (
+  <div>
+    <h2 className="text-xl font-semibold mb-4">{title}</h2>
+    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mb-8 border">
+      <thead className="bg-gray-100">
+        <tr>
+          <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+            Metric
+          </th>
+          <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+            Value
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200">
+        {data &&
+          Object.entries(data).map(([key, value]) => (
+            <tr key={key} className="">
+              <td className="px-2 py-2 font-medium text-gray-900 border-r">
+                {key.replace(/([A-Z])/g, " $1").trim()}
+              </td>
+              <td className="py-2 px-2">
+                {typeof value === "object" && value !== null ? (
+                  <NestedObjectRenderer data={value} />
+                ) : (
+                  (value as React.ReactNode)
+                )}
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const NestedObjectRenderer: React.FC<{ data: any }> = ({ data }) => (
+  <div className="mt-2 border-gray-300">
+    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm mb-8">
+      <tbody className="divide-y divide-gray-200">
+        {data &&
+          Object.entries(data).map(([key, value]) => (
+            <tr key={key} className="">
+              <td className="py-2 font-medium text-gray-900 px-2 border-r">
+                {key.replace(/([A-Z])/g, " $1").trim()}
+              </td>
+              <td className="py-2 pl-2">
+                {typeof value === "object" && value !== null ? (
+                  <NestedObjectRenderer data={value} />
+                ) : (
+                  (value as React.ReactNode)
+                )}
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const TextSection: React.FC<{ title: string; data: any }> = ({
+  title,
+  data,
+}) => (
+  <div>
+    <h2 className="heading-text mb-2">{title}</h2>
+    <div className="space-y-4">
+      {data &&
+        Object.entries(data).map(([key, value]) => (
+          <div key={key}>
+            <h3 className="font-semibold text-2xl">
+              - {key.replace(/([A-Z])/g, " $1").trim()}
+            </h3>
+            {typeof value === "object" && value !== null ? (
+              <TextNestedObjectRenderer data={value} />
+            ) : (
+              <p className="pl-4 text-md">{value as React.ReactNode}</p>
+            )}
+          </div>
+        ))}
+    </div>
+  </div>
+);
+
+const TextNestedObjectRenderer: React.FC<{ data: any }> = ({ data }) => (
+  <div className="pl-4  border-gray-300 ml-4">
+    {data &&
+      Object.entries(data).map(([key, value]) => (
+        <div key={key} className="py-1">
+          <h4 className="font-medium text-xl">
+            {key.replace(/([A-Z])/g, " $1").trim()}
+          </h4>
+          {typeof value === "object" && value !== null ? (
+            <TextNestedObjectRenderer data={value} />
+          ) : (
+            <p className="pl-4 text-md">{value as React.ReactNode}</p>
+          )}
+        </div>
+      ))}
+  </div>
+);
 
 export default Analysis;
